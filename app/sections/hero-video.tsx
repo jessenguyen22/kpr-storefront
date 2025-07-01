@@ -9,8 +9,6 @@ import clsx from "clsx";
 import type { CSSProperties } from "react";
 import {
   forwardRef,
-  lazy,
-  Suspense,
   useCallback,
   useEffect,
   useState,
@@ -89,8 +87,6 @@ function getPlayerSize(id: string) {
   return { width: "100%", height: "auto" };
 }
 
-const ReactPlayer = lazy(() => import("react-player"));
-
 const HeroVideo = forwardRef<HTMLElement, HeroVideoProps>((props, ref) => {
   const {
     videoURL,
@@ -165,18 +161,28 @@ const HeroVideo = forwardRef<HTMLElement, HeroVideoProps>((props, ref) => {
         )}
       >
         {inView && (
-          <Suspense fallback={null}>
-            <ReactPlayer
+          videoURL.includes("youtube.com") ? (
+            <iframe
+              src={videoURL.replace("watch?v=", "embed/")}
+              width={size.width}
+              height={size.height}
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+              className="aspect-video"
+              frameBorder={0}
+            />
+          ) : (
+            <video
               src={videoURL}
-              playing
+              autoPlay
               muted
-              loop={true}
+              loop
               width={size.width}
               height={size.height}
               controls={false}
               className="aspect-video"
             />
-          </Suspense>
+          )
         )}
         <Overlay
           enableOverlay={enableOverlay}
